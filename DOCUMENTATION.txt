@@ -1,0 +1,39 @@
+
+Usage:
+You run ./PPCInject [input file name] [file name to output to] [one or more assembly files]
+
+Terminology:
+A ``function'' is a snippet of code. It need not be an actual function. 
+You could use it to replace a few lines of code, or a whole function
+I got this convention from Star Rod, the epic Paper Mario tool
+
+Format of assembly files:
+An assembly file is made up of one or more functions.
+
+To start a function, you write a line like: 
+#function [function label] [offset] (optionally maxSize [max size])
+A function label must start with a dollar sign, like $betta
+A offset can either be a unsigned offset or "after [function label]"
+When you use "after $betta", you are saying that you want to have a function placed after the code for function $betta
+You could optionally put "maxSize [size]" at the end, which makes sure that you don't write more code the max size you specify allows
+
+After that, for the body of the function, each line either specifies a local label or an instruction
+A local label must start with a period, like .bagel
+You would write an instruction just like the PowerPC documentation tells you to.
+There are some shortcuts like andi instead of andi. , and cmpw r2,r1 instead of cmpw cr0,r2,r1
+Note that Dolphin's convention of adding +/- to the end of conditional branches instruction names is NOT supported.
+
+To end a function, just start another function with the #function line. The end of the file also ends a function 
+
+Throughout, you could use the percent sign to specify line comments
+
+See my example bagel.asm to see an example of an assembly file
+
+Instructions supported:
+b/bl
+bc/beq/bne/bgt/blt/bge/ble
+blr
+cmpw
+cmplw
+cmpwi
+cmplwi
