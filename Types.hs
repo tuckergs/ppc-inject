@@ -30,6 +30,7 @@ data Instruction =
   | Istb { stbRS :: Word8 , stbRA :: Word8 , stbD :: Word16 }
   | Isth { sthRS :: Word8 , sthRA :: Word8 , sthD :: Word16 }
   | Istw { stwRS :: Word8 , stwRA :: Word8 , stwD :: Word16 }
+  | Iother Word32
   deriving Show
 
 

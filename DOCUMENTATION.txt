@@ -37,3 +37,25 @@ cmpw
 cmplw
 cmpwi
 cmplwi
+add
+mullw
+subf/sub
+and
+or/mr
+slw
+sraw
+srw
+addi/li
+addis/lis
+mulli
+andi/andi.
+ori/nop
+rlwinm
+lbz
+lhz
+lha
+lwz
+stb
+sth
+stw
+Can specify the machine code for an instruction (for example, mflr r0 can be specified by writing 0x7c0802a6)

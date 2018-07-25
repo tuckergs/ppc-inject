@@ -275,3 +275,6 @@ instructionToWord _ _ (Istw _RS _RA _D) =
     rSPart = fromIntegral _RS `shiftL` 21
     rAPart = fromIntegral _RA `shiftL` 16
     dPart = fromIntegral _D
+-- other
+instructionToWord _ _ (Iother inst) = return inst
+

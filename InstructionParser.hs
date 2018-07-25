@@ -400,8 +400,7 @@ realInstructionParser =
     ws1
     (rS,rA,d) <- loadStoreArgParser
     return $ Istw rS rA d
-
-
-
-
-
+  -- other
+  <|> do
+    inst <- numberParser
+    return $ Iother inst
