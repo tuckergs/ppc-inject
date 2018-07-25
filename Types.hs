@@ -17,6 +17,8 @@ data Instruction =
   | Islw { slwRc :: Bool , slwRA :: Word8 , slwRS :: Word8 , slwRB :: Word8 }
   | Israw { srawRc :: Bool , srawRA :: Word8 , srawRS :: Word8 , srawRB :: Word8 }
   | Isrw { srwRc :: Bool , srwRA :: Word8 , srwRS :: Word8 , srwRB :: Word8 }
+  | Iextsb { extsbRc :: Bool , extsbRA :: Word8 , extsbRS :: Word8 }
+  | Iextsh { extshRc :: Bool , extshRA :: Word8 , extshRS :: Word8 }
   | Iaddi { addiRD :: Word8 , addiRA :: Word8 , addiSIMM :: Word16 }
   | Iaddis { addisRD :: Word8 , addisRA :: Word8 , addisSIMM :: Word16 }
   | Imulli { mulliRD :: Word8 , mulliRA :: Word8 , mulliSIMM :: Word16 }
@@ -30,6 +32,8 @@ data Instruction =
   | Istb { stbRS :: Word8 , stbRA :: Word8 , stbD :: Word16 }
   | Isth { sthRS :: Word8 , sthRA :: Word8 , sthD :: Word16 }
   | Istw { stwRS :: Word8 , stwRA :: Word8 , stwD :: Word16 }
+  | Imtspr { mtsprSPR :: SpecialRegister , mtsprRS :: Word8 }
+  | Imfspr { mfsprRS :: Word8 , mfsprSPR :: SpecialRegister }
   | Iother Word32
   deriving Show
 
@@ -37,6 +41,9 @@ data Instruction =
 data CondOp = LessThan | GreaterThan | LessThanEqual | GreaterThanEqual | Equal | NotEqual | Always | Other Word8 Word8
   deriving Show
 -- Other represents other BO, BI values for bc
+
+data SpecialRegister = XER | LR | CTR
+  deriving Show
 
 data UnresolvedOffset = After Label | Address Word32
   deriving Eq

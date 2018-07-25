@@ -11,6 +11,8 @@ mr r7,r6
 slw r7,r6,r5
 sraw r7, r6, r5 % Shift right algebraic
 srw r7,r6, r5
+extsb r7, r6
+extsh r7, r6
 bl $debugfunc
 cmpw r7,r6
 beq .two
@@ -33,6 +35,8 @@ lwz r7, 0x000C (r6)
 stb r7, 0x0011 (r6)
 sth r7, 0x001e ( r6 )
 stw r7, -0x0020 (r6)
+mflr r0
+mtlr r0
 nop
 
 #function $debugfunc 0xa4208

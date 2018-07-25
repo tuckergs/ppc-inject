@@ -23,6 +23,12 @@ condToWord = \case
   Always -> 0x02800000
   Other bo bi -> (fromIntegral bo `shiftL` 21) .|. (fromIntegral bi `shiftL` 16)
 
+specRegToWordForMxspr :: SpecialRegister -> Word32
+specRegToWordForMxspr = (`shiftL` 11) . \case
+  XER -> 0x0020
+  LR -> 0x0100
+  CTR -> 0x0120
+
 -- Takes our label table, where the instruction is, the instruction and returns the machine code for it
 -- The check for whether a label has been defined is not here
 -- Note that b and bc, if you give it an address that is too far away 
@@ -168,6 +174,24 @@ instructionToWord _ _ (Isrw _Rc _RA _RS _RB) =
     rBPart = fromIntegral _RB `shiftL` 11
     opPart2 = 536 `shiftL` 1
     rcPart = enumToNum _Rc 
+-- extsb
+instructionToWord _ _ (Iextsb _Rc _RA _RS) = 
+  return $ opPart .|. rSPart .|. rAPart .|. opPart2 .|. rcPart
+  where
+    opPart = 31 `shiftL` 26
+    rSPart = fromIntegral _RS `shiftL` 21
+    rAPart = fromIntegral _RA `shiftL` 16
+    opPart2 = 954 `shiftL` 1
+    rcPart = enumToNum _Rc 
+-- extsh
+instructionToWord _ _ (Iextsh _Rc _RA _RS) = 
+  return $ opPart .|. rSPart .|. rAPart .|. opPart2 .|. rcPart
+  where
+    opPart = 31 `shiftL` 26
+    rSPart = fromIntegral _RS `shiftL` 21
+    rAPart = fromIntegral _RA `shiftL` 16
+    opPart2 = 922 `shiftL` 1
+    rcPart = enumToNum _Rc 
 -- addi
 instructionToWord _ _ (Iaddi _RD _RA _SIMM) =
   return $ opPart .|. rDPart .|. rAPart .|. simmPart
@@ -275,6 +299,22 @@ instructionToWord _ _ (Istw _RS _RA _D) =
     rSPart = fromIntegral _RS `shiftL` 21
     rAPart = fromIntegral _RA `shiftL` 16
     dPart = fromIntegral _D
+-- mtspr
+instructionToWord _ _ (Imtspr _SPR _RS) =
+  return $ opPart .|. rSPart .|. sprPart .|. opPart2
+  where
+    opPart = 31 `shiftL` 26
+    rSPart = fromIntegral _RS `shiftL` 21
+    sprPart = specRegToWordForMxspr _SPR
+    opPart2 = 467 `shiftL` 1
+-- mfspr
+instructionToWord _ _ (Imfspr _RD _SPR) =
+  return $ opPart .|. rDPart .|. sprPart .|. opPart2
+  where
+    opPart = 31 `shiftL` 26
+    rDPart = fromIntegral _RD `shiftL` 21
+    sprPart = specRegToWordForMxspr _SPR
+    opPart2 = 339 `shiftL` 1
 -- other
 instructionToWord _ _ (Iother inst) = return inst
 

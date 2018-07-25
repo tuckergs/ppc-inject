@@ -254,6 +254,24 @@ realInstructionParser =
     isRegister rS
     isRegister rB
     return $ Isrw False rA rS rB
+  -- extsb
+  <|> do
+    tokens "extsb"
+    ws1
+    rA <- rWithCommaParser
+    rS <- rWithoutCommaParser
+    isRegister rA
+    isRegister rS
+    return $ Iextsb False rA rS 
+  -- extsh
+  <|> do
+    tokens "extsh"
+    ws1
+    rA <- rWithCommaParser
+    rS <- rWithoutCommaParser
+    isRegister rA
+    isRegister rS
+    return $ Iextsh False rA rS 
   -- addi
   <|> do
     tokens "addi"
@@ -400,6 +418,20 @@ realInstructionParser =
     ws1
     (rS,rA,d) <- loadStoreArgParser
     return $ Istw rS rA d
+  -- mtlr
+  <|> do
+    tokens "mtlr"
+    ws1
+    rX <- rWithoutCommaParser
+    isRegister rX
+    return $ Imtspr LR rX
+  -- mflr
+  <|> do
+    tokens "mflr"
+    ws1
+    rX <- rWithoutCommaParser
+    isRegister rX
+    return $ Imfspr rX LR 
   -- other
   <|> do
     inst <- numberParser
