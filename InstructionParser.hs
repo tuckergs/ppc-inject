@@ -18,11 +18,11 @@ crfDWithCommaParser = do
   commaParser
   return n
 
+rWithoutCommaParser :: Parse String Word8
 rWithoutCommaParser = token 'r' >> decNumberParser
 
 rWithCommaParser = do
-  token 'r'
-  n <- decNumberParser
+  n <- rWithoutCommaParser
   commaParser
   return n
 
@@ -418,6 +418,12 @@ realInstructionParser =
     ws1
     (rS,rA,d) <- loadStoreArgParser
     return $ Istw rS rA d
+  -- stwu
+  <|> do
+    tokens "stwu"
+    ws1
+    (rS,rA,d) <- loadStoreArgParser
+    return $ Istwu rS rA d
   -- mtlr
   <|> do
     tokens "mtlr"
