@@ -41,7 +41,7 @@ instructionToWord tbl pc (Ib _LK _Lbl) = do
     let relOff = (-) (brutalLookup _Lbl tbl) pc
     when (not $ (relOff .&. 0xFC000000) `elem` [0,0xFC000000]) $
       die $ "One of the b/bl instructions reference a label that is too far away"
-    return $ relOff .&. 0x3FFFFFFC
+    return $ relOff .&. 0x03FFFFFC
   return $ opPart .|. addrPart .|. lkPart
   where
     opPart = (18 `shiftL` 26)
