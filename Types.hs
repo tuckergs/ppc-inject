@@ -24,6 +24,7 @@ data Instruction =
   | Imulli { mulliRD :: Word8 , mulliRA :: Word8 , mulliSIMM :: Word16 }
   | Iandi { andiRA :: Word8 , andiRS :: Word8 , andiUIMM :: Word16 }
   | Iori { oriRA :: Word8 , oriRS :: Word8 , oriUIMM :: Word16 }
+  | Ixori { xoriRA :: Word8 , xoriRS :: Word8 , xoriUIMM :: Word16 }
   | Irlwinm { rlwinmRc :: Bool , rlwinmRA :: Word8 , rlwinmRS :: Word8 , rlwinmSH :: Word8 , rlwinmMB :: Word8 , rlwinmME :: Word8 }
   | Ilbz { lbzRD :: Word8 , lbzRA :: Word8 , lbzD :: Word16 }
   | Ilhz { lhzRD :: Word8 , lhzRA :: Word8 , lhzD :: Word16 }

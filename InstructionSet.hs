@@ -232,6 +232,14 @@ instructionToWord _ _ (Iori _RA _RS _UIMM) =
     rSPart = fromIntegral _RS `shiftL` 21
     rAPart = fromIntegral _RA `shiftL` 16
     simmPart = fromIntegral _UIMM
+-- xori
+instructionToWord _ _ (Ixori _RA _RS _UIMM) =
+  return $ opPart .|. rSPart .|. rAPart .|. simmPart
+  where
+    opPart = 26 `shiftL` 26
+    rSPart = fromIntegral _RS `shiftL` 21
+    rAPart = fromIntegral _RA `shiftL` 16
+    simmPart = fromIntegral _UIMM
 -- rlwinm
 instructionToWord _ _ (Irlwinm _Rc _RA _RS _SH _MB _ME) =
   return $ opPart .|. rSPart .|. rAPart .|. shPart .|. mbPart .|. mePart .|. rcPart
@@ -296,6 +304,14 @@ instructionToWord _ _ (Istw _RS _RA _D) =
   return $ opPart .|. rSPart .|. rAPart .|. dPart
   where
     opPart = 36 `shiftL` 26
+    rSPart = fromIntegral _RS `shiftL` 21
+    rAPart = fromIntegral _RA `shiftL` 16
+    dPart = fromIntegral _D
+-- stwu
+instructionToWord _ _ (Istwu _RS _RA _D) =
+  return $ opPart .|. rSPart .|. rAPart .|. dPart
+  where
+    opPart = 37 `shiftL` 26
     rSPart = fromIntegral _RS `shiftL` 21
     rAPart = fromIntegral _RA `shiftL` 16
     dPart = fromIntegral _D

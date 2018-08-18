@@ -52,6 +52,7 @@ addis/lis
 mulli
 andi/andi.
 ori/nop
+xori
 rlwinm
 lbz
 lhz

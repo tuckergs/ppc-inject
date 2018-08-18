@@ -358,6 +358,16 @@ realInstructionParser =
     isRegister rA
     isRegister rS
     return $ Iori rA rS uimm
+  -- xori
+  <|> do
+    tokens "xori"
+    ws1
+    rA <- rWithCommaParser
+    rS <- rWithCommaParser
+    uimm <- signedNumberParser
+    isRegister rA
+    isRegister rS
+    return $ Ixori rA rS uimm
   -- nop
   <|> do
     tokens "nop"
