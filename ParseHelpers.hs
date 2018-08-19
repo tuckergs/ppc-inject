@@ -16,19 +16,17 @@ localLabelParser = liftA2 (:) (token '.') nameParser
 
 functionLabelParser = liftA2 (:) (token '$') nameParser
 
-anyLabelParser = localLabelParser <|> functionLabelParser
+offsetLabelParser = liftA2 (:) (token '@') nameParser
+
+anyLabelParser = localLabelParser <|> functionLabelParser <|> offsetLabelParser
 
 nameParser :: Parse String String
-nameParser = do
-  c <- spot isAlpha
-  cs <- list $ spot isAlphaNum
-  return $ c:cs
+nameParser = liftA2 (:) (spot isAlpha) (list $ spot isAlphaNum)
 
 readParser :: Read a => Parse String String -> Parse String a
 readParser = (=<<) $ flip (.) readMaybe $ \case
   Nothing -> none
   Just res -> return res
-  
 
 numberStringParser = (list1 $ spot isDigit) <|> (liftA2 (++) (tokens "0x") (list1 $ spot isHexDigit))
 

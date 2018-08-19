@@ -38,6 +38,8 @@ instructionToWord :: LabelTable -> Word32 -> Instruction -> IO Word32
 -- b
 instructionToWord tbl pc (Ib _LK _Lbl) = do
   addrPart <- do
+    when (not $ elem _Lbl $ map fst tbl) $
+      die $ "Label \"" ++ _Lbl ++ "\" is not defined for one of your functions"
     let relOff = (-) (brutalLookup _Lbl tbl) pc
     when (not $ (relOff .&. 0xFC000000) `elem` [0,0xFC000000]) $
       die $ "One of the b/bl instructions reference a label that is too far away"
@@ -49,6 +51,8 @@ instructionToWord tbl pc (Ib _LK _Lbl) = do
 -- bc
 instructionToWord tbl pc (Ibc _LK _CondOp _Lbl) = do
   addrPart <- do
+    when (not $ elem _Lbl $ map fst tbl) $
+      die $ "Label \"" ++ _Lbl ++ "\" is not defined for one of your functions"
     let relOff = (-) (brutalLookup _Lbl tbl) pc
     when (not $ (relOff .&. 0xFFFF0000) `elem` [0,0xFFFF0000]) $
       die $ "One of the conditional branch instructions reference a label that is too far away"

@@ -54,6 +54,7 @@ type ResolvedOffset = Word32
 data Function = Function { getLabel :: Label , getOffset :: UnresolvedOffset , getMaxSize :: Maybe Word32 , getInstructions :: [Instruction] , getLabelTable :: LabelTable }
 type FunctionTable = [Function]
 
+
 -- data Function o = Function { getLabel :: Label , getOffset :: o , getEnsureOffset :: Word32 , getInstructions :: [Instruction] , getLabelTable :: LabelTable }
 -- type UnresolvedFunction = Function UnresolvedOffset
 -- type ResolvedFunction = Function ResolvedOffset

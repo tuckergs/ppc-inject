@@ -18,21 +18,27 @@ import Types
 ------ TODO: Make ParseFileRecord keep track of line number
 
 
-data ParseFileRecord = PFR { getLineNum :: Int , getLines :: [String] , getFunctionTable :: FunctionTable , getFunctionMaybe :: Maybe Function }
+data ParseFileRecord = PFR { getLineNum :: Int , 
+                              getLines :: [String] , 
+                              getFunctionTable :: FunctionTable , 
+                              getFunctionMaybe :: Maybe Function , 
+                              getOffsetTable :: LabelTable 
+                            }
 
 data ParserLine = BeginFunctionLine (Label,UnresolvedOffset,(Maybe Word32)) 
                   | LabelLine String 
                   | InstructionLine Instruction
+                  | OffsetLine String Word32
                   | Comment
 
 -- Note that the local labels will have a offset relative to the beginning of its function
 -- This will be fixed on write-out
-parseFile :: String -> IO FunctionTable
+parseFile :: String -> IO (FunctionTable,LabelTable)
 parseFile inFileName = do
   inFile <- openFile inFileName ReadMode
   allLns <- fmap lines $ hGetContents inFile
-  let initRecord = PFR { getLineNum = 1 , getLines = allLns , getFunctionTable = [] , getFunctionMaybe = Nothing }
-  functionTable <- 
+  let initRecord = PFR { getLineNum = 1 , getLines = allLns , getFunctionTable = [] , getFunctionMaybe = Nothing , getOffsetTable = [] }
+  pair <- 
     flip fix initRecord $ 
       \loop curRecord -> do
         let
@@ -40,6 +46,7 @@ parseFile inFileName = do
           curLines = getLines curRecord
           curFunctionTable = getFunctionTable curRecord
           curFunctionMaybe = getFunctionMaybe curRecord
+          curOffsetTable = getOffsetTable curRecord
           updateFunctionTable fn@(Function lbl _ maxSizeMaybe insts _) = do
             case maxSizeMaybe of
               Nothing -> return ()
@@ -54,8 +61,10 @@ parseFile inFileName = do
         case curLines of
           [] -> 
             case curFunctionMaybe of
-              Nothing -> return curFunctionTable
-              Just fn -> updateFunctionTable fn
+              Nothing -> return (curFunctionTable,curOffsetTable)
+              Just fn -> do
+                theFunctionTable <- updateFunctionTable fn
+                return (theFunctionTable,curOffsetTable)
           (ln:lns) -> do
             let 
               nextRecord = curRecord { getLineNum = curLineNum + 1 , getLines = lns }
@@ -80,15 +89,20 @@ parseFile inFileName = do
                   Nothing -> return ()
                   Just _ -> die $ "You defined label \"" ++ lbl ++ "\" twice"
                 loop $ nextRecord { getFunctionMaybe = Just $ curFn { getLabelTable = (lbl,curOffsetInFn):curLblTbl } }
+              (Just curFn, Right (OffsetLine lbl off)) -> do
+                case lookup lbl curOffsetTable of
+                  Nothing -> return ()
+                  Just _ -> die $ "You defined offset \"" ++ lbl ++ "\" twice"
+                loop $ nextRecord { getOffsetTable = (lbl,off):curOffsetTable }
               (Just curFn,Right (InstructionLine inst)) -> do
                 let curInsts = getInstructions curFn
                 loop $ nextRecord { getFunctionMaybe = Just $ curFn { getInstructions = inst:curInsts } }
   hClose inFile
-  return functionTable
+  return pair
 
 
 lineParser :: Parse String ParserLine
-lineParser = comment <|> beginFunctionParser <|> localLabelLineParser <|> instructionParser
+lineParser = comment <|> beginFunctionParser <|> localLabelLineParser <|> offsetParser <|> instructionParser
 
 comment = do
   ws 
@@ -110,6 +124,16 @@ beginFunctionParser = do
   return $ BeginFunctionLine (lbl,off,maxSizeMaybe)
 
 localLabelLineParser = ws >> fmap LabelLine localLabelParser
+
+offsetParser = do
+  ws
+  tokens "#offset"
+  ws1
+  lbl <- offsetLabelParser
+  ws1
+  off <- numberParser
+  comment
+  return $ OffsetLine lbl off
 
 instructionParser = do
   ws

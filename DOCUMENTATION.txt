@@ -8,7 +8,7 @@ You could use it to replace a few lines of code, or a whole function
 I got this convention from Star Rod, the epic Paper Mario tool
 
 Format of assembly files:
-An assembly file is made up of one or more functions.
+An assembly file is made up of one or more functions. 
 
 To start a function, you write a line like: 
 #function [function label] [offset] (optionally maxSize [max size])
@@ -26,6 +26,15 @@ Note that Dolphin's convention of adding +/- to the end of conditional branches 
 To end a function, just start another function with the #function line. The end of the file also ends a function 
 
 Throughout, you could use the percent sign to specify line comments
+
+You may also specify global offsets by using "#offset [offset label] [offset]". These let you specify out of file offsets
+An offset label must start with an '@'
+
+IMPORTANT: Any offset that you specify is relative to how far we are from the beginning of the file.
+For example, if we want to replace function at RAM address 0x803133cc and the file is loaded at 0x80270100, the offset we want is 803133cc-80270100 = a32cc
+Keep this in mind also when specify out-of-file addresses using #offset
+The number system defaults to decimal so be sure to use "0x" when specify hexadecimal
+
 
 See my example bagel.asm to see an example of an assembly file
 

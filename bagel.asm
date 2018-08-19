@@ -37,9 +37,16 @@ sth r7, 0x001e ( r6 )
 stw r7, -0x0020 (r6)
 mflr r0
 mtlr r0
+bl @fn808f8d9c
 nop
+blr
+
+#offset @fn808f8d9c 0x688c9c
 
 #function $debugfunc 0xa4208
 nop
 nop
 nop
+
+
+% #function $betta 0xa3978

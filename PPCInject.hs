@@ -26,17 +26,23 @@ main = do
   let (inFileName:outFileName:asmFiles) = args
 
   let 
-    handleFile curFunctionTable fileName = do
+    handleFile (curFunctionTable,curOffsetTable) fileName = do
       hPutStrLn stderr $ "Reading file " ++ fileName
-      fnTbl <- parseFile fileName
-      let fnLblsAlreadyDefined = flip filter (map getLabel fnTbl) $ flip elem $ map getLabel curFunctionTable
+      (fnTbl,offTbl) <- parseFile fileName
+      let 
+        fnLblsAlreadyDefined = flip filter (map getLabel fnTbl) $ flip elem $ map getLabel curFunctionTable
+        offLblsAlreadyDefined = flip filter (map fst offTbl) $ flip elem $ map fst curOffsetTable
       when (not $ null fnLblsAlreadyDefined) $ do
         hPutStrLn stderr $ "These functions have already been defined in another file:"
         forM_ fnLblsAlreadyDefined $ putStrLn . ("  "++)
         exitFailure
-      return $ fnTbl ++ curFunctionTable
+      when (not $ null offLblsAlreadyDefined) $ do
+        hPutStrLn stderr $ "These offsets have already been defined in another file:"
+        forM_ offLblsAlreadyDefined $ putStrLn . ("  "++)
+        exitFailure
+      return $ (fnTbl ++ curFunctionTable, offTbl ++ curOffsetTable)
   -- Read all files and get all functions
-  functionTable <- foldM handleFile [] asmFiles
+  (functionTable,offsetTable) <- foldM handleFile ([],[]) asmFiles
   -- Resolve after-offsets
   globalLabelTable <- resolveLabelsInFunctionTable functionTable
   -- Make the local labels absolute
@@ -66,7 +72,7 @@ main = do
   -- Get machine code from instructions
   machineCodeTable <- 
     flip mapM finalFunctionTable $ \(lbl,off,insts,localLabelTable) -> do
-      let thisLabelTable = localLabelTable ++ globalLabelTable
+      let thisLabelTable = localLabelTable ++ globalLabelTable ++ offsetTable
       fmap ((,) off) $ forM (zip insts $ map ((+off).(4*)) [0..]) $ 
         \(inst,pc) -> instructionToWord thisLabelTable pc inst
       

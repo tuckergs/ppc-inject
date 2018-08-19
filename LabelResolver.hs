@@ -45,9 +45,9 @@ resolveLabelsInFunctionTable fnTbl = do
       loop rest
 
   -- Resolution
-  lblTbl <- flip fix (initialLabelTable,initialLabelData) $ \loop (fullLblTbl,stepLblData) -> do
+  lblTbl <- flip fix (initialLabelTable,initialLabelData,fnTbl) $ \loop (fullLblTbl,stepLblData,stepFnTbl) -> do
     let
-      nextStepForElement ((lblForEle,offForEle),szForEle) = do
+      nextStepForElement ((lblForEle,offForEle),szForEle) curFnTbl = 
         let 
           isFnThatIsAfterEle = \case
             (Function _ (After lbl) _ _ _) -> lbl == lblForEle
@@ -56,16 +56,24 @@ resolveLabelsInFunctionTable fnTbl = do
           -- dieIfLabelWasAlreadyHandled lblData@((lbl,_),_) = case lookup lbl fullLblTbl of
             -- Just _ -> die $ "Your after-offsets are unresolvable because there is a loop in the graph of after-offsets (vertices are labels, edges are the after-offset declarations). Look at function \"" ++ lbl ++ "\""
             -- Nothing -> return $ lblData
-          dieIfMoreThanOneElement ls = 
-            if length ls > 1
-              then die $ "There is more than one function that has as an after offset \"" ++ lblForEle ++ "\""
-              else return ls
-        -- (=<<) dieIfMoreThanOneElement $ mapM dieIfLabelWasAlreadyHandled $ map fnWithAfterOffsetToLblData $ filter isFnThatIsAfterEle fnTbl
-        dieIfMoreThanOneElement $ map fnWithAfterOffsetToLblData $ filter isFnThatIsAfterEle fnTbl
-    nextStepLblData <- fmap concat $ mapM nextStepForElement stepLblData
+          lblDataForFnsWithRelevantAfterOffset = map fnWithAfterOffsetToLblData $ filter isFnThatIsAfterEle curFnTbl
+          newFnTbl = 
+            if length lblDataForFnsWithRelevantAfterOffset > 1
+              then 
+                let
+                  relevantFnLbls = map (fst . fst) lblDataForFnsWithRelevantAfterOffset
+                  replaceFn fn = if (getLabel fn `elem` tail relevantFnLbls)
+                    then fn { getOffset = After $ head relevantFnLbls }
+                    else fn
+                in map replaceFn curFnTbl
+              else curFnTbl
+        in (take 1 $ lblDataForFnsWithRelevantAfterOffset,newFnTbl)
+      -- nextStepLblData = fmap concat $ mapM nextStepForElement stepLblData
+      (nextStepLblData,nextFnTbl) = 
+        foldl (\(curLblData,curFnTbl) ele -> flip id (nextStepForElement ele curFnTbl) $ \(resLblData,resFnTbl) -> (curLblData ++ resLblData,resFnTbl)) ([],stepFnTbl) stepLblData
     if null nextStepLblData
       then return fullLblTbl
-      else loop $ (,) (fmap fst nextStepLblData ++ fullLblTbl) nextStepLblData
+      else loop $ (,,) (fmap fst nextStepLblData ++ fullLblTbl) nextStepLblData nextFnTbl
   
   -- Check if there is an after label that doesn't exist
   let
