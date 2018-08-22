@@ -212,6 +212,17 @@ realInstructionParser =
     isRegister rS
     isRegister rB
     return $ Ior False rA rS rB
+  -- xor
+  <|> do
+    tokens "xor"
+    ws1
+    rA <- rWithCommaParser
+    rS <- rWithCommaParser
+    rB <- rWithoutCommaParser
+    isRegister rA
+    isRegister rS
+    isRegister rB
+    return $ Ixor False rA rS rB
   -- mr 
   <|> do
     tokens "mr"
@@ -348,6 +359,16 @@ realInstructionParser =
     isRegister rA
     isRegister rS
     return $ Iandi rA rS uimm
+  -- andis
+  <|> do
+    tokens "andis" <|> tokens "andis."
+    ws1
+    rA <- rWithCommaParser
+    rS <- rWithCommaParser
+    uimm <- signedNumberParser
+    isRegister rA
+    isRegister rS
+    return $ Iandis rA rS uimm
   -- ori
   <|> do
     tokens "ori"
@@ -358,6 +379,16 @@ realInstructionParser =
     isRegister rA
     isRegister rS
     return $ Iori rA rS uimm
+  -- oris
+  <|> do
+    tokens "oris"
+    ws1
+    rA <- rWithCommaParser
+    rS <- rWithCommaParser
+    uimm <- signedNumberParser
+    isRegister rA
+    isRegister rS
+    return $ Ioris rA rS uimm
   -- xori
   <|> do
     tokens "xori"
@@ -368,6 +399,16 @@ realInstructionParser =
     isRegister rA
     isRegister rS
     return $ Ixori rA rS uimm
+  -- xoris
+  <|> do
+    tokens "xoris"
+    ws1
+    rA <- rWithCommaParser
+    rS <- rWithCommaParser
+    uimm <- signedNumberParser
+    isRegister rA
+    isRegister rS
+    return $ Ixoris rA rS uimm
   -- nop
   <|> do
     tokens "nop"

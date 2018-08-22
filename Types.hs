@@ -14,6 +14,7 @@ data Instruction =
   | Isubf { subfOE :: Bool , subfRc :: Bool , subfRD :: Word8 , subfRA :: Word8 , subfRB :: Word8 }
   | Iand { andRc :: Bool , andRA :: Word8 , andRS :: Word8 , andRB :: Word8 }
   | Ior { orRc :: Bool , orRA :: Word8 , orRS :: Word8 , orRB :: Word8 }
+  | Ixor { xorRc :: Bool , xorRA :: Word8 , xorRS :: Word8 , xorRB :: Word8 }
   | Islw { slwRc :: Bool , slwRA :: Word8 , slwRS :: Word8 , slwRB :: Word8 }
   | Israw { srawRc :: Bool , srawRA :: Word8 , srawRS :: Word8 , srawRB :: Word8 }
   | Isrw { srwRc :: Bool , srwRA :: Word8 , srwRS :: Word8 , srwRB :: Word8 }
@@ -23,8 +24,11 @@ data Instruction =
   | Iaddis { addisRD :: Word8 , addisRA :: Word8 , addisSIMM :: Word16 }
   | Imulli { mulliRD :: Word8 , mulliRA :: Word8 , mulliSIMM :: Word16 }
   | Iandi { andiRA :: Word8 , andiRS :: Word8 , andiUIMM :: Word16 }
+  | Iandis { andisRA :: Word8 , andisRS :: Word8 , andisUIMM :: Word16 }
   | Iori { oriRA :: Word8 , oriRS :: Word8 , oriUIMM :: Word16 }
+  | Ioris { orisRA :: Word8 , orisRS :: Word8 , orisUIMM :: Word16 }
   | Ixori { xoriRA :: Word8 , xoriRS :: Word8 , xoriUIMM :: Word16 }
+  | Ixoris { xorisRA :: Word8 , xorisRS :: Word8 , xorisUIMM :: Word16 }
   | Irlwinm { rlwinmRc :: Bool , rlwinmRA :: Word8 , rlwinmRS :: Word8 , rlwinmSH :: Word8 , rlwinmMB :: Word8 , rlwinmME :: Word8 }
   | Ilbz { lbzRD :: Word8 , lbzRA :: Word8 , lbzD :: Word16 }
   | Ilhz { lhzRD :: Word8 , lhzRA :: Word8 , lhzD :: Word16 }

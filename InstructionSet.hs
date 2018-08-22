@@ -148,6 +148,16 @@ instructionToWord _ _ (Ior _Rc _RA _RS _RB) =
     rBPart = fromIntegral _RB `shiftL` 11
     opPart2 = 444 `shiftL` 1
     rcPart = enumToNum _Rc 
+-- xor
+instructionToWord _ _ (Ixor _Rc _RA _RS _RB) = 
+  return $ opPart .|. rSPart .|. rAPart .|. rBPart .|. opPart2 .|. rcPart
+  where
+    opPart = 31 `shiftL` 26
+    rSPart = fromIntegral _RS `shiftL` 21
+    rAPart = fromIntegral _RA `shiftL` 16
+    rBPart = fromIntegral _RB `shiftL` 11
+    opPart2 = 316 `shiftL` 1
+    rcPart = enumToNum _Rc 
 -- slw
 instructionToWord _ _ (Islw _Rc _RA _RS _RB) = 
   return $ opPart .|. rSPart .|. rAPart .|. rBPart .|. opPart2 .|. rcPart
@@ -228,6 +238,14 @@ instructionToWord _ _ (Iandi _RA _RS _UIMM) =
     rSPart = fromIntegral _RS `shiftL` 21
     rAPart = fromIntegral _RA `shiftL` 16
     simmPart = fromIntegral _UIMM
+-- andis
+instructionToWord _ _ (Iandis _RA _RS _UIMM) =
+  return $ opPart .|. rSPart .|. rAPart .|. simmPart
+  where
+    opPart = 29 `shiftL` 26
+    rSPart = fromIntegral _RS `shiftL` 21
+    rAPart = fromIntegral _RA `shiftL` 16
+    simmPart = fromIntegral _UIMM
 -- ori
 instructionToWord _ _ (Iori _RA _RS _UIMM) =
   return $ opPart .|. rSPart .|. rAPart .|. simmPart
@@ -236,11 +254,27 @@ instructionToWord _ _ (Iori _RA _RS _UIMM) =
     rSPart = fromIntegral _RS `shiftL` 21
     rAPart = fromIntegral _RA `shiftL` 16
     simmPart = fromIntegral _UIMM
+-- oris
+instructionToWord _ _ (Ioris _RA _RS _UIMM) =
+  return $ opPart .|. rSPart .|. rAPart .|. simmPart
+  where
+    opPart = 25 `shiftL` 26
+    rSPart = fromIntegral _RS `shiftL` 21
+    rAPart = fromIntegral _RA `shiftL` 16
+    simmPart = fromIntegral _UIMM
 -- xori
 instructionToWord _ _ (Ixori _RA _RS _UIMM) =
   return $ opPart .|. rSPart .|. rAPart .|. simmPart
   where
     opPart = 26 `shiftL` 26
+    rSPart = fromIntegral _RS `shiftL` 21
+    rAPart = fromIntegral _RA `shiftL` 16
+    simmPart = fromIntegral _UIMM
+-- xoris
+instructionToWord _ _ (Ixoris _RA _RS _UIMM) =
+  return $ opPart .|. rSPart .|. rAPart .|. simmPart
+  where
+    opPart = 27 `shiftL` 26
     rSPart = fromIntegral _RS `shiftL` 21
     rAPart = fromIntegral _RA `shiftL` 16
     simmPart = fromIntegral _UIMM

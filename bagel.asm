@@ -7,6 +7,7 @@ mullw r7,r6,r5
 sub r7,r6,r5
 and r7,r6,r5
 or r7,r6,r5
+xor r7,r6,r5
 mr r7,r6
 slw r7,r6,r5
 sraw r7, r6, r5 % Shift right algebraic
@@ -26,6 +27,9 @@ addi r3,r1,0x0001
 mulli r3,r1,0x0001
 andi r3,r1,0x0001
 ori r3,r1,0x0001
+andis r3,r1,0x0002
+oris r3,r1,0x0003
+xoris r3,r1,0x0004
 nop
 rlwinm r3,r3,2,0,29
 lbz r7, 0 (r6)

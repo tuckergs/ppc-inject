@@ -51,6 +51,7 @@ mullw
 subf/sub
 and
 or/mr
+xor
 slw
 sraw
 srw
@@ -60,8 +61,11 @@ addi/li
 addis/lis
 mulli
 andi/andi.
+andis/andis.
 ori/nop
+oris
 xori
+xoris
 rlwinm
 lbz
 lhz
