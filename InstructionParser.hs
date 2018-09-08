@@ -475,6 +475,17 @@ realInstructionParser =
     ws1
     (rS,rA,d) <- loadStoreArgParser
     return $ Istwu rS rA d
+  -- lwzx
+  <|> do
+    tokens "lwzx"
+    ws1
+    rD <- rWithCommaParser
+    rA <- rWithCommaParser
+    rB <- rWithoutCommaParser
+    isRegister rD
+    isRegister rA
+    isRegister rB
+    return $ Ilwzx rD rA rB
   -- mtlr
   <|> do
     tokens "mtlr"

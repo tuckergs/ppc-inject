@@ -39,6 +39,7 @@ lwz r7, 0x000C (r6)
 stb r7, 0x0011 (r6)
 sth r7, 0x001e ( r6 )
 stw r7, -0x0020 (r6)
+lwzx r7, r6, r5
 mflr r0
 mtlr r0
 bl @fn808f8d9c

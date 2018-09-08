@@ -353,6 +353,15 @@ instructionToWord _ _ (Istwu _RS _RA _D) =
     rSPart = fromIntegral _RS `shiftL` 21
     rAPart = fromIntegral _RA `shiftL` 16
     dPart = fromIntegral _D
+-- lwzx
+instructionToWord _ _ (Ilwzx _RD _RA _RB) = 
+  return $ opPart .|. rDPart .|. rAPart .|. rBPart .|. opPart2 
+  where
+    opPart = 31 `shiftL` 26
+    rDPart = fromIntegral _RD `shiftL` 21
+    rAPart = fromIntegral _RA `shiftL` 16
+    rBPart = fromIntegral _RB `shiftL` 11
+    opPart2 = 23 `shiftL` 1
 -- mtspr
 instructionToWord _ _ (Imtspr _SPR _RS) =
   return $ opPart .|. rSPart .|. sprPart .|. opPart2
