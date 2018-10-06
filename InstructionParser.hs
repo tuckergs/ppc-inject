@@ -26,6 +26,11 @@ rWithCommaParser = do
   commaParser
   return n
 
+numberWithCommaParser = do
+  n <- numberParser
+  commaParser
+  return n
+
 loadStoreArgParser :: Parse String (Word8,Word8,Word16)
 loadStoreArgParser = do
   rX <- rWithoutCommaParser
@@ -68,6 +73,17 @@ realInstructionParser =
   <|> do
     tokens "blr"
     return $ Ibclr False Always
+  -- bc / bcl 
+  <|> do
+    _LK <- 
+      (tokens "bc" >> return False) 
+      <|> (tokens "bcl" >> return True) 
+    ws1
+    _BO <- numberWithCommaParser
+    _BI <- numberWithCommaParser
+    lbl <- anyLabelParser
+    return $ Ibc _LK (Other _BO _BI) lbl
+
   -- beq
   <|> do
     tokens "beq"

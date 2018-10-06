@@ -43,6 +43,7 @@ lwzx r7, r6, r5
 mflr r0
 mtlr r0
 bl @fn808f8d9c
+bc 16, 0, .two
 nop
 blr
 
