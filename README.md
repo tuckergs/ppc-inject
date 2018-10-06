@@ -2,7 +2,7 @@
 # ppc-inject
 
 ## Wat?
-This is basically an assembler for the PowerPC that injects your code into a file. Note that not all instructions and mnemonics will be implemented; I will include the ones that I need for my various projects. Pull requests are welcome.
+This is basically an assembler for the PowerPC that injects your code into a file. Note that not all instructions and mnemonics are implemented; I will include the ones that I need for my various projects, and you may request some instructions. Feel free to request instructions and to make pull requests. 
 
 This is written in Haskell, but I don't think that it will be hard to add new instructions.
 
