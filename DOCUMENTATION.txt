@@ -40,7 +40,7 @@ See my example bagel.asm to see an example of an assembly file
 
 Instructions supported:
 b/bl
-bc/beq/bne/bgt/blt/bge/ble
+bc/bcl/beq/bne/bgt/blt/bge/ble
 blr
 cmpw
 cmplw
