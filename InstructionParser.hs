@@ -18,21 +18,27 @@ crfDWithCommaParser = do
   commaParser
   return n
 
-rWithoutCommaParser :: Parse String Word8
-rWithoutCommaParser = token 'r' >> decNumberParser
+regWithoutCommaParser :: String -> Parse String Word8
+regWithoutCommaParser prefix = tokens prefix >> decNumberParser
 
-rWithCommaParser = do
-  n <- rWithoutCommaParser
-  commaParser
-  return n
+rWithoutCommaParser :: Parse String Word8
+rWithoutCommaParser = regWithoutCommaParser "r"
+
+fWithoutCommaParser = regWithoutCommaParser "f"
+
+regWithCommaParser :: String -> Parse String Word8
+regWithCommaParser prefix = regWithoutCommaParser prefix <* commaParser
+
+rWithCommaParser :: Parse String Word8
+rWithCommaParser = regWithCommaParser "r"
 
 numberWithCommaParser = do
   n <- numberParser
   commaParser
   return n
 
-loadStoreArgParser :: Parse String (Word8,Word8,Word16)
-loadStoreArgParser = do
+loadStoreArgParserOld :: Parse String (Word8,Word8,Word16)
+loadStoreArgParserOld = do
   rX <- rWithoutCommaParser
   commaParser
   d <- signedNumberParser
@@ -45,6 +51,24 @@ loadStoreArgParser = do
   isRegister rX
   isRegister rA
   return (rX,rA,d)
+
+loadStoreArgParser :: String -> (Word8 -> Word8 -> Word16 -> a) -> Parse String a
+loadStoreArgParser prefix f = do 
+  rX <- regWithoutCommaParser prefix
+  commaParser
+  d <- signedNumberParser
+  ws
+  token '('
+  ws
+  rA <- rWithoutCommaParser 
+  ws
+  token ')'
+  isRegister rX
+  isRegister rA
+  return $ f rX rA d 
+
+rLoadStoreArgParser = loadStoreArgParser "r"
+fLoadStoreArgParser = loadStoreArgParser "f"
 
 isRegister :: Word8 -> Parse String ()
 isRegister rP = when ((/= 0) $ rP .&. 0xE0) $ none
@@ -447,50 +471,42 @@ realInstructionParser =
   <|> do
     tokens "lbz"
     ws1
-    (rD,rA,d) <- loadStoreArgParser
-    return $ Ilbz rD rA d
+    rLoadStoreArgParser Ilbz
   -- lhz
   <|> do
     tokens "lhz"
     ws1
-    (rD,rA,d) <- loadStoreArgParser
-    return $ Ilhz rD rA d
+    rLoadStoreArgParser Ilhz
   -- lha
   <|> do
     tokens "lha"
     ws1
-    (rD,rA,d) <- loadStoreArgParser
-    return $ Ilha rD rA d
+    rLoadStoreArgParser Ilha
   -- lwz
   <|> do
     tokens "lwz"
     ws1
-    (rD,rA,d) <- loadStoreArgParser
-    return $ Ilwz rD rA d
+    rLoadStoreArgParser Ilwz
   -- stb
   <|> do
     tokens "stb"
     ws1
-    (rS,rA,d) <- loadStoreArgParser
-    return $ Istb rS rA d
+    rLoadStoreArgParser Istb
   -- sth
   <|> do
     tokens "sth"
     ws1
-    (rS,rA,d) <- loadStoreArgParser
-    return $ Isth rS rA d
+    rLoadStoreArgParser Isth
   -- stw
   <|> do
     tokens "stw"
     ws1
-    (rS,rA,d) <- loadStoreArgParser
-    return $ Istw rS rA d
+    rLoadStoreArgParser Istw
   -- stwu
   <|> do
     tokens "stwu"
     ws1
-    (rS,rA,d) <- loadStoreArgParser
-    return $ Istwu rS rA d
+    rLoadStoreArgParser Istwu
   -- lwzx
   <|> do
     tokens "lwzx"
@@ -502,6 +518,21 @@ realInstructionParser =
     isRegister rA
     isRegister rB
     return $ Ilwzx rD rA rB
+  -- lfs
+  <|> do
+    tokens "lfs"
+    ws1
+    fLoadStoreArgParser Ilfs
+  -- lfd
+  <|> do
+    tokens "lfd"
+    ws1
+    fLoadStoreArgParser Ilfd
+  -- stfs
+  <|> do
+    tokens "stfs"
+    ws1
+    fLoadStoreArgParser Istfs
   -- mtlr
   <|> do
     tokens "mtlr"

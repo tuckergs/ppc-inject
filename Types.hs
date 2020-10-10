@@ -39,6 +39,9 @@ data Instruction =
   | Istw { stwRS :: Word8 , stwRA :: Word8 , stwD :: Word16 }
   | Istwu { stwuRS :: Word8 , stwuRA :: Word8 , stwuD :: Word16 }
   | Ilwzx { lwzxRD :: Word8 , lwzxRA :: Word8 , lwzxRB :: Word8 }
+  | Ilfs { lfsFRT :: Word8 , lfsRA :: Word8 , lfsD :: Word16 }
+  | Ilfd { lfdFRT :: Word8 , lfdRA :: Word8 , lfdD :: Word16 }
+  | Istfs { stfsFRS :: Word8 , stfsRA :: Word8 , stfsD :: Word16 }
   | Imtspr { mtsprSPR :: SpecialRegister , mtsprRS :: Word8 }
   | Imfspr { mfsprRS :: Word8 , mfsprSPR :: SpecialRegister }
   | Iother Word32

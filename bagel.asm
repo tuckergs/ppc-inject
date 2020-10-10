@@ -40,6 +40,9 @@ stb r7, 0x0011 (r6)
 sth r7, 0x001e ( r6 )
 stw r7, -0x0020 (r6)
 lwzx r7, r6, r5
+lfs f7, 0x0012 (r5)
+lfd f7, 0x0016 (r5)
+stfs f7, 0x0016 (r5)
 mflr r0
 mtlr r0
 bl @fn808f8d9c
