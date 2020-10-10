@@ -42,6 +42,7 @@ data Instruction =
   | Ilfs { lfsFRT :: Word8 , lfsRA :: Word8 , lfsD :: Word16 }
   | Ilfd { lfdFRT :: Word8 , lfdRA :: Word8 , lfdD :: Word16 }
   | Istfs { stfsFRS :: Word8 , stfsRA :: Word8 , stfsD :: Word16 }
+  | Ifmr { fmrRc :: Bool , fmrFRT :: Word8 , fmrFRB :: Word8 }
   | Imtspr { mtsprSPR :: SpecialRegister , mtsprRS :: Word8 }
   | Imfspr { mfsprRS :: Word8 , mfsprSPR :: SpecialRegister }
   | Iother Word32

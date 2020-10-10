@@ -43,10 +43,16 @@ lwzx r7, r6, r5
 lfs f7, 0x0012 (r5)
 lfd f7, 0x0016 (r5)
 stfs f7, 0x0016 (r5)
+fmr f7, f6
 mflr r0
 mtlr r0
 bl @fn808f8d9c
 bc 16, 0, .two
+nop
+add r7, r6, r5
+addo r7, r6, r5
+add. r7, r6, r5
+addo. r7, r6, r5
 nop
 blr
 

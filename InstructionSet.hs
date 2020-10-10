@@ -386,6 +386,15 @@ instructionToWord _ _ (Istfs _RS _RA _D) =
     rSPart = fromIntegral _RS `shiftL` 21
     rAPart = fromIntegral _RA `shiftL` 16
     dPart = fromIntegral _D
+-- fmr
+instructionToWord _ _ (Ifmr _Rc _FT _FB) = 
+  return $ opPart .|. fTPart .|. fBPart .|. opPart2 .|. rcPart
+  where
+    opPart = 63 `shiftL` 26
+    fTPart = fromIntegral _FT `shiftL` 21
+    fBPart = fromIntegral _FB `shiftL` 11
+    opPart2 = 72 `shiftL` 1
+    rcPart = enumToNum _Rc 
 -- mtspr
 instructionToWord _ _ (Imtspr _SPR _RS) =
   return $ opPart .|. rSPart .|. sprPart .|. opPart2

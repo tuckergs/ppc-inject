@@ -21,16 +21,20 @@ crfDWithCommaParser = do
 regWithoutCommaParser :: String -> Parse String Word8
 regWithoutCommaParser prefix = tokens prefix >> decNumberParser
 
-rWithoutCommaParser :: Parse String Word8
 rWithoutCommaParser = regWithoutCommaParser "r"
-
 fWithoutCommaParser = regWithoutCommaParser "f"
 
 regWithCommaParser :: String -> Parse String Word8
 regWithCommaParser prefix = regWithoutCommaParser prefix <* commaParser
 
-rWithCommaParser :: Parse String Word8
 rWithCommaParser = regWithCommaParser "r"
+fWithCommaParser = regWithCommaParser "f"
+
+oeParser :: Parse String Bool
+oeParser = return False <|> (token 'o' >> return True)
+
+rcParser :: Parse String Bool
+rcParser = return False <|> (token '.' >> return True)
 
 numberWithCommaParser = do
   n <- numberParser
@@ -189,6 +193,8 @@ realInstructionParser =
   -- add
   <|> do
     tokens "add"
+    _OE <- oeParser
+    _Rc <- rcParser
     ws1
     rD <- rWithCommaParser
     rA <- rWithCommaParser
@@ -196,10 +202,12 @@ realInstructionParser =
     isRegister rD
     isRegister rA
     isRegister rB
-    return $ Iadd False False rD rA rB
+    return $ Iadd _OE _Rc rD rA rB
   -- mullw
   <|> do
     tokens "mullw"
+    _OE <- oeParser
+    _Rc <- rcParser
     ws1
     rD <- rWithCommaParser
     rA <- rWithCommaParser
@@ -207,10 +215,12 @@ realInstructionParser =
     isRegister rD
     isRegister rA
     isRegister rB
-    return $ Imullw False False rD rA rB
+    return $ Imullw _OE _Rc rD rA rB
   -- subf
   <|> do
     tokens "subf"
+    _OE <- oeParser
+    _Rc <- rcParser
     ws1
     rD <- rWithCommaParser
     rA <- rWithCommaParser
@@ -218,10 +228,12 @@ realInstructionParser =
     isRegister rD
     isRegister rA
     isRegister rB
-    return $ Isubf False False rD rA rB
+    return $ Isubf _OE _Rc rD rA rB
   -- sub
   <|> do
     tokens "sub"
+    _OE <- oeParser
+    _Rc <- rcParser
     ws1
     rD <- rWithCommaParser
     rA <- rWithCommaParser
@@ -229,10 +241,11 @@ realInstructionParser =
     isRegister rD
     isRegister rA
     isRegister rB
-    return $ Isubf False False rD rB rA
+    return $ Isubf _OE _Rc rD rB rA
   -- and
   <|> do
     tokens "and"
+    _Rc <- rcParser
     ws1
     rA <- rWithCommaParser
     rS <- rWithCommaParser
@@ -240,10 +253,11 @@ realInstructionParser =
     isRegister rA
     isRegister rS
     isRegister rB
-    return $ Iand False rA rS rB
+    return $ Iand _Rc rA rS rB
   -- or
   <|> do
     tokens "or"
+    _Rc <- rcParser
     ws1
     rA <- rWithCommaParser
     rS <- rWithCommaParser
@@ -251,10 +265,11 @@ realInstructionParser =
     isRegister rA
     isRegister rS
     isRegister rB
-    return $ Ior False rA rS rB
+    return $ Ior _Rc rA rS rB
   -- xor
   <|> do
     tokens "xor"
+    _Rc <- rcParser
     ws1
     rA <- rWithCommaParser
     rS <- rWithCommaParser
@@ -262,19 +277,21 @@ realInstructionParser =
     isRegister rA
     isRegister rS
     isRegister rB
-    return $ Ixor False rA rS rB
+    return $ Ixor _Rc rA rS rB
   -- mr 
   <|> do
     tokens "mr"
+    _Rc <- rcParser
     ws1
     rX <- rWithCommaParser
     rY <- rWithoutCommaParser
     isRegister rX
     isRegister rY
-    return $ Ior False rX rY rY
+    return $ Ior _Rc rX rY rY
   -- slw
   <|> do
     tokens "slw"
+    _Rc <- rcParser
     ws1
     rA <- rWithCommaParser
     rS <- rWithCommaParser
@@ -282,10 +299,11 @@ realInstructionParser =
     isRegister rA
     isRegister rS
     isRegister rB
-    return $ Islw False rA rS rB
+    return $ Islw _Rc rA rS rB
   -- sraw
   <|> do
     tokens "sraw"
+    _Rc <- rcParser
     ws1
     rA <- rWithCommaParser
     rS <- rWithCommaParser
@@ -293,10 +311,11 @@ realInstructionParser =
     isRegister rA
     isRegister rS
     isRegister rB
-    return $ Israw False rA rS rB
+    return $ Israw _Rc rA rS rB
   -- srw
   <|> do
     tokens "srw"
+    _Rc <- rcParser
     ws1
     rA <- rWithCommaParser
     rS <- rWithCommaParser
@@ -304,25 +323,27 @@ realInstructionParser =
     isRegister rA
     isRegister rS
     isRegister rB
-    return $ Isrw False rA rS rB
+    return $ Isrw _Rc rA rS rB
   -- extsb
   <|> do
     tokens "extsb"
+    _Rc <- rcParser
     ws1
     rA <- rWithCommaParser
     rS <- rWithoutCommaParser
     isRegister rA
     isRegister rS
-    return $ Iextsb False rA rS 
+    return $ Iextsb _Rc rA rS 
   -- extsh
   <|> do
     tokens "extsh"
+    _Rc <- rcParser
     ws1
     rA <- rWithCommaParser
     rS <- rWithoutCommaParser
     isRegister rA
     isRegister rS
-    return $ Iextsh False rA rS 
+    return $ Iextsh _Rc rA rS 
   -- addi
   <|> do
     tokens "addi"
@@ -456,6 +477,7 @@ realInstructionParser =
   -- rlwinm
   <|> do
     tokens "rlwinm"
+    _Rc <- rcParser
     ws1
     rA <- rWithCommaParser
     rS <- rWithCommaParser
@@ -466,7 +488,7 @@ realInstructionParser =
     me <- numberParser
     let malformed = (/= 5) $ length $ flip filter [rA,rS,sh,mb,me] $ flip elem [0..31] 
     when malformed $ none
-    return $ Irlwinm False rA rS sh mb me
+    return $ Irlwinm _Rc rA rS sh mb me
   -- lbz
   <|> do
     tokens "lbz"
@@ -533,6 +555,16 @@ realInstructionParser =
     tokens "stfs"
     ws1
     fLoadStoreArgParser Istfs
+  -- fmr
+  <|> do
+    tokens "fmr"
+    _Rc <- rcParser
+    ws1
+    fX <- fWithCommaParser
+    fY <- fWithoutCommaParser
+    isRegister fX
+    isRegister fY
+    return $ Ifmr _Rc fX fY 
   -- mtlr
   <|> do
     tokens "mtlr"

@@ -79,6 +79,7 @@ lwzx
 lfs
 lfd
 stfs
+fmr
 mflr
 mtlr
 Can specify the machine code for an instruction (for example, mflr r0 can be specified by writing 0x7c0802a6)
