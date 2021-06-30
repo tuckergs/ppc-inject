@@ -8,10 +8,10 @@ This is written in Haskell, but I don't think that it will be hard to add new in
 
 ## Compiling
 
-You need ghc to compile the code. You could get Haskell Platform to get it
+You need stack to compile the code. You could get Haskell Platform to get it
 Run
 ```
-ghc PPCInject.hs
+stack build
 ```
 to compile
 

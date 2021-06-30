@@ -1,7 +1,15 @@
 
+{-# LANGUAGE FlexibleContexts, NoMonomorphismRestriction, TemplateHaskell #-}
+
 module Types where
 
+import Control.Lens
+import Data.DList (DList)
 import Data.Word
+
+type Label = String
+
+type LabelTable = [(Label,Word32)]
 
 data Instruction =
   Ib { bLK :: Bool , bAddrLabel :: Label } -- Address is the address where you want to go to
@@ -59,19 +67,19 @@ data SpecialRegister = XER | LR | CTR
 data UnresolvedOffset = After Label | Address Word32
   deriving Eq
 type ResolvedOffset = Word32
+makePrisms ''UnresolvedOffset
 
-data Function = Function { getLabel :: Label , getOffset :: UnresolvedOffset , getMaxSize :: Maybe Word32 , getInstructions :: [Instruction] , getLabelTable :: LabelTable }
+data Function = Function { _fnLabel :: Label , _fnOffset :: UnresolvedOffset , _fnMaxSize :: Maybe Word32 , _fnInstructions :: DList Instruction , _fnLocalLabelTable :: LabelTable }
 type FunctionTable = [Function]
+makeLenses ''Function
+{-
+getLabel = view fnLabel
+getOffset = view fnOffset
+getMaxSize = view fnMaxSize
+-- getInstructions = view fnInstructions
+getLocalLabelTable = view fnLocalLabelTable
+-}
 
+sizeOf :: (Foldable t, Num a) => t Instruction -> a
+sizeOf = (4*) . fromIntegral . length
 
--- data Function o = Function { getLabel :: Label , getOffset :: o , getEnsureOffset :: Word32 , getInstructions :: [Instruction] , getLabelTable :: LabelTable }
--- type UnresolvedFunction = Function UnresolvedOffset
--- type ResolvedFunction = Function ResolvedOffset
-
--- type FunctionTable o = [Function o]
--- type UnresolvedFunctionTable = FunctionTable UnresolvedOffset
--- type ResolvedFunctionTable = FunctionTable ResolvedOffset
-
-type Label = String
-
-type LabelTable = [(Label,Word32)]

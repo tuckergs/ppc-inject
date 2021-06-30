@@ -30,10 +30,10 @@ specRegToWordForMxspr = (`shiftL` 11) . \case
   CTR -> 0x0120
 
 -- Takes our label table, where the instruction is, the instruction and returns the machine code for it
--- The check for whether a label has been defined is not here
+-- The check for whether a label has been defined is here
 -- Note that b and bc, if you give it an address that is too far away 
 -- (that is, the distance can't be captured by the instruction), 
--- then this will fail silently. Somewhere, I should put a check in
+-- then this will exit with an error.
 instructionToWord :: LabelTable -> Word32 -> Instruction -> IO Word32
 -- b
 instructionToWord tbl pc (Ib _LK _Lbl) = do
