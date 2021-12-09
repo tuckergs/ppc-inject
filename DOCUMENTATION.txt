@@ -51,6 +51,8 @@ mullw
 subf/sub
 and
 or/mr
+nand
+nor/not
 xor
 slw
 sraw
