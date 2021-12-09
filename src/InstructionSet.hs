@@ -158,6 +158,26 @@ instructionToWord _ _ (Ixor _Rc _RA _RS _RB) =
     rBPart = fromIntegral _RB `shiftL` 11
     opPart2 = 316 `shiftL` 1
     rcPart = enumToNum _Rc 
+-- nand
+instructionToWord _ _ (Inand _Rc _RA _RS _RB) = 
+  return $ opPart .|. rSPart .|. rAPart .|. rBPart .|. opPart2 .|. rcPart
+  where
+    opPart = 31 `shiftL` 26
+    rSPart = fromIntegral _RS `shiftL` 21
+    rAPart = fromIntegral _RA `shiftL` 16
+    rBPart = fromIntegral _RB `shiftL` 11
+    opPart2 = 476 `shiftL` 1
+    rcPart = enumToNum _Rc 
+-- nor
+instructionToWord _ _ (Inor _Rc _RA _RS _RB) = 
+  return $ opPart .|. rSPart .|. rAPart .|. rBPart .|. opPart2 .|. rcPart
+  where
+    opPart = 31 `shiftL` 26
+    rSPart = fromIntegral _RS `shiftL` 21
+    rAPart = fromIntegral _RA `shiftL` 16
+    rBPart = fromIntegral _RB `shiftL` 11
+    opPart2 = 124 `shiftL` 1
+    rcPart = enumToNum _Rc 
 -- slw
 instructionToWord _ _ (Islw _Rc _RA _RS _RB) = 
   return $ opPart .|. rSPart .|. rAPart .|. rBPart .|. opPart2 .|. rcPart

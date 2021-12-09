@@ -8,7 +8,10 @@ sub r7,r6,r5
 and r7,r6,r5
 or r7,r6,r5
 xor r7,r6,r5
+nand r7,r6,r5
+nor r7,r6,r5
 mr r7,r6
+not r7,r6
 slw r7,r6,r5
 sraw r7, r6, r5 % Shift right algebraic
 srw r7,r6, r5

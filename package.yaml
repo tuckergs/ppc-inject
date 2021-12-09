@@ -29,7 +29,7 @@ library:
   source-dirs: src
 
 executables:
-  ppc-inject-exe:
+  PPCInject:
     main:                Main.hs
     source-dirs:         src
     ghc-options:

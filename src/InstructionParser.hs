@@ -266,6 +266,16 @@ realInstructionParser =
     isRegister rS
     isRegister rB
     return $ Ior _Rc rA rS rB
+  -- mr 
+  <|> do
+    tokens "mr"
+    _Rc <- rcParser
+    ws1
+    rX <- rWithCommaParser
+    rY <- rWithoutCommaParser
+    isRegister rX
+    isRegister rY
+    return $ Ior _Rc rX rY rY
   -- xor
   <|> do
     tokens "xor"
@@ -278,16 +288,40 @@ realInstructionParser =
     isRegister rS
     isRegister rB
     return $ Ixor _Rc rA rS rB
-  -- mr 
+  -- nand
   <|> do
-    tokens "mr"
+    tokens "nand"
+    _Rc <- rcParser
+    ws1
+    rA <- rWithCommaParser
+    rS <- rWithCommaParser
+    rB <- rWithoutCommaParser
+    isRegister rA
+    isRegister rS
+    isRegister rB
+    return $ Inand _Rc rA rS rB
+  -- nor
+  <|> do
+    tokens "nor"
+    _Rc <- rcParser
+    ws1
+    rA <- rWithCommaParser
+    rS <- rWithCommaParser
+    rB <- rWithoutCommaParser
+    isRegister rA
+    isRegister rS
+    isRegister rB
+    return $ Inor _Rc rA rS rB
+  -- not 
+  <|> do
+    tokens "not"
     _Rc <- rcParser
     ws1
     rX <- rWithCommaParser
     rY <- rWithoutCommaParser
     isRegister rX
     isRegister rY
-    return $ Ior _Rc rX rY rY
+    return $ Inor _Rc rX rY rY
   -- slw
   <|> do
     tokens "slw"

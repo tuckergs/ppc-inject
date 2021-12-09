@@ -23,6 +23,8 @@ data Instruction =
   | Iand { andRc :: Bool , andRA :: Word8 , andRS :: Word8 , andRB :: Word8 }
   | Ior { orRc :: Bool , orRA :: Word8 , orRS :: Word8 , orRB :: Word8 }
   | Ixor { xorRc :: Bool , xorRA :: Word8 , xorRS :: Word8 , xorRB :: Word8 }
+  | Inand { nandRc :: Bool , nandRA :: Word8 , nandRS :: Word8 , nandRB :: Word8 }
+  | Inor { norRc :: Bool , norRA :: Word8 , norRS :: Word8 , norRB :: Word8 }
   | Islw { slwRc :: Bool , slwRA :: Word8 , slwRS :: Word8 , slwRB :: Word8 }
   | Israw { srawRc :: Bool , srawRA :: Word8 , srawRS :: Word8 , srawRB :: Word8 }
   | Isrw { srwRc :: Bool , srwRA :: Word8 , srwRS :: Word8 , srwRB :: Word8 }
